@@ -238,7 +238,8 @@
             };
             return{
                 options: {
-                    businessLicenseImg: undefined
+                    businessLicenseImg: undefined,
+                    certificateImg: undefined
                 },
                 rules: {
                     username: [
@@ -357,7 +358,8 @@
                     console.log("上传完毕后的回调");
                     console.log(response);
                 });*/
-                let valid = await this.$refs["addForm"].validate(valid=>{});
+
+                /*let valid = await this.$refs["addForm"].validate(valid=>{});
                 // 如果验证通过
                 if(valid){
                     // 文件上传
@@ -390,12 +392,60 @@
                     }).finally(()=>{
 
                     });
-                }
+                }*/
+
+
+                this.$refs["addForm"].validate(valid=>{
+                    console.log(valid);
+                    if(valid){
+                        console.log("diaoyong");
+                        // 上传文件加到form中
+                        // 文件上传
+                        const formData = new FormData()
+                        // 两张图片
+                        formData.append('businessLicense',this.form.businessLicense);
+                        formData.append('certificate',this.form.businessLicense);
+                        // 表单数据
+                        formData.append('username',this.form.username);
+                        formData.append('password',this.form.password);
+                        formData.append('name',this.form.name);
+                        formData.append('address',this.form.address);
+                        console.log(formData);
+                        register(formData).then(response=>{
+                            console.log(response);
+                            if(response.code==200){
+                                ElMessage({
+                                    showClose: true,
+                                    message: "注册成功",
+                                    type: 'success'
+                                })
+                                // 关闭
+                                this.handleClose();
+                                // 重置表单
+                                this.$refs["addForm"].resetFields();
+                                // 重置上传组件
+                                this.resetUpload();
+                            }
+                        }).catch(err=>{
+                            console.log(err);
+                        }).finally(()=>{
+
+                        });
+                    }
+                });
+            },
+            resetUpload(){
+                // 上传组件重置
+                this.$refs.uploadRef.clearFiles();
+                this.options.businessLicenseImg = undefined
+                this.options.certificateImg = undefined
             },
             handleClose(){
                 this.dialogVisible = false;
                 // 重置表单
                 this.$refs["addForm"].resetFields();
+                // 重置上传组件
+                this.resetUpload();
             },
             openRegisterDialog(){
                 this.dialogVisible = true;
